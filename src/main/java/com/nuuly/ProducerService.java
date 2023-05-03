@@ -1,17 +1,15 @@
 package com.nuuly;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
- * This is an example ProducerService that can publish a message to a topic.
+ * This is an example ProducerService that can publish a message to a topic. This can be used if it is autowired to
+ * another class.
  * An example of using this is as follows:
  *
  *      <pre>
- *      producer.sendMessage(
- *          topic = MY_TOPIC,
+ *      this.producer.sendInventoryMessage(
  *          key = key,
  *          value = value
  *     )
