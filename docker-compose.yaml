@@ -1,0 +1,45 @@
+version: '3'
+services:
+    postgres:
+        image: "postgres:14.4"
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_DB: inventory_db
+            POSTGRES_USER: inventory_user
+            POSTGRES_PASSWORD: inventory_password
+    kafka:
+        image: confluentinc/cp-enterprise-kafka:6.2.0
+        depends_on:
+            - zookeeper
+        ports:
+            - "9092:9092"
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:32181'
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+            KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+            KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+            KAFKA_CREATE_TOPICS: "inventory_updates:1:1"
+        working_dir: /data
+        volumes:
+            - ./data:/data
+    zookeeper:
+        image: confluentinc/cp-zookeeper:6.2.0
+        ports:
+            - "32181:32181"
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 32181
+            ZOOKEEPER_TICK_TIME: 2000
+    app:
+        container_name: nuuly-assessment-api
+        build: .
+        ports:
+            - "8080:8080"
+        depends_on:
+            - postgres
+            - zookeeper
+            - kafka

@@ -1,0 +1,1 @@
+POST localhost:8080/create?sku=123&receiptAmount=5
