@@ -3,21 +3,23 @@
 ## Objectives
 
 ### Exercise 1
-Create a flow of adding new items to our inventory to be purchased. 
-Creating purchase orders will increase the inventory by the amount received. 
-Purchasing items will decrease the inventory by the amount requested, if inventory exists.
+* Complete the `/create` endpoint to add new items to inventory to be purchased.
+  * Creating purchase orders will increase the inventory by the amount received.
+* Complete the `/purchase` endpoint to purchase items.
+  * Purchasing items will decrease the inventory by the quantity requested.
+  * Only allow items to be purchased if inventory exists.
 
 ### Exercise 2
-Allow for a way to purchase a list of items & amounts instead of one at a time. 
-Currently, you can only purchase one SKU at a time.
-We want to allow a user to purchase multiple SKUs with multiple amounts of it.
+* Update the `/purchase` endpoint to allow purchasing a list of items & quantity (instead of one at a time).
+  * Purchasing items will decrease the inventory by the quantity requested.
+  * Only allow items to be purchased if inventory exists.
 
 ### Exercise 3
-We want our analytics team to see what items were purchased the most/least. 
-When an item is purchased, keep track of how many times that items was historically purchased. 
-To do this, asynchronously produce a message that is consumed by a separate service to track the favorites.
-This should be done in a non-blocking manner to purchase requests since we just want this for reporting and not block the purchase endpoint. 
-Then, with the `/favorites` endpoint, we want to view a list of rankings of most purchased to least purchased items.
+* We want our analytics team to see what items were purchased the most/least.
+* When an item is purchased, keep track of how many times that items was historically purchased.
+* To do this, asynchronously produce a message that is consumed by a separate service to track the favorites.
+* This should be done in a non-blocking manner to purchase requests since we just want this for reporting and not block the purchase endpoint.
+* Complete the `/favorites` endpoint to return a lists of the most and least purchased items.
 
 
 ### Further notes
