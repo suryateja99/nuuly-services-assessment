@@ -20,6 +20,8 @@ import static org.springframework.http.HttpStatus.*;
 public class Controller {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
     private final ProducerService producer;
 
     @Autowired

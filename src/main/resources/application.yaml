@@ -9,3 +9,6 @@ spring:
     bootstrap-servers: kafka:9092
     consumer:
       group-id: inventory-group
+    producer:
+      acks: all
+      retries: 3
