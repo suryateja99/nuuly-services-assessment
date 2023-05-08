@@ -1,13 +1,12 @@
-package com.nuuly;
-
+package com.nully;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -59,9 +58,12 @@ public class Controller {
     @PostMapping("/purchase")
     public ResponseEntity<?> purchase(
             @RequestParam("sku") String sku,
-            @RequestParam("amount") int amount
+            @RequestParam("amount") int amount,
+            @RequestBody InventoryItem item
     ) {
-        return new ResponseEntity<>(OK);
+        inventoryRepository.save(item);
+        return ResponseEntity.ok("Item created successfully.");
+        //return new ResponseEntity<>(OK);
     }
 
     /**
@@ -71,7 +73,40 @@ public class Controller {
      * @return A list of favorite items
      */
     @GetMapping("/favorites")
-    public ResponseEntity<?> favorites() {
-        return new ResponseEntity<>(OK);
+    public ResponseEntity<?> favorites(@RequestBody PurchaseRequest request) {
+
+        Optional<InventoryItem> optionalItem = inventoryRepository.findById(String.valueOf(request.getItemId()));
+        if (optionalItem.isPresent()) {
+            InventoryItem item = optionalItem.get();
+            if (item.getQuantity() >= request.getQuantity()) {
+                item.setQuantity(item.getQuantity() - request.getQuantity());
+                inventoryRepository.save(item);
+                return ResponseEntity.ok("Item purchased successfully.");
+            } else {
+                return ResponseEntity.badRequest().body("Not enough inventory.");
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+    @PostMapping("/purchase")
+    public ResponseEntity<String> purchaseItems(@RequestBody List<PurchaseRequest> purchaseRequests) {
+        for (PurchaseRequest request : purchaseRequests) {
+            Optional<InventoryItem> optionalItem = inventoryRepository.findById(String.valueOf(request.getItemId()));
+            if (optionalItem.isPresent()) {
+                InventoryItem item = optionalItem.get();
+                if (item.getQuantity() >= request.getQuantity()) {
+                    item.setQuantity(item.getQuantity() - request.getQuantity());
+                    inventoryRepository.save(item);
+                } else {
+                    return ResponseEntity.badRequest().body("Not enough inventory for item: " + item.getName());
+                }
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        return ResponseEntity.ok("Items purchased successfully.");
+    }
+
 }
